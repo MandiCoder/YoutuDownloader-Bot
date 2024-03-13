@@ -28,10 +28,21 @@ def upload_audio(app, message_id, data):
     
 def download_thumb(url, name):
     img_name = f"{name}.jpg"
-    with open(img_name, 'wb') as img:
-        img.write(get(url).content)
+    url_default = "https://ik.imagekit.io/sync/Designer%20(2).png"
+    
+    try:
+        imagen = get(url)
+    except Exception as e:
+        imagen = get(url_default)
+        print(e)
         
+    with open(img_name, 'wb') as img:
+        img.write(imagen.content)
+    
     imagen = Image.open(img_name)
     imagen.thumbnail((320, 320))
     imagen.save(img_name)
+    
+        
+    
     return img_name
