@@ -4,8 +4,7 @@ from pytube import YouTube
 output_directory = "downloads"
 
 def download_video(url:str, message) -> dict:
-    
-    yt = YouTube(url, on_progress_callback=on_progress)
+    yt = YouTube(url, on_progress_callback=on_progress, proxies={"http" : "35.185.196.38:3128"})
     title = yt.title
     sms = message.reply(f"**🚚 Descargando video: `{title}`**")
     video = yt.streams.get_highest_resolution()
@@ -22,9 +21,7 @@ def download_video(url:str, message) -> dict:
     
     
 def download_audio(url:str, message) -> dict:
-    
-    yt = YouTube(url, on_progress_callback=on_progress)
-    
+    yt = YouTube(url, on_progress_callback=on_progress, proxies={"http" : "35.185.196.38:3128"})
     title = yt.title
     sms = message.reply(f"**🚚 Descargando audio: `{title}`**")
     video = yt.streams.get_audio_only()
