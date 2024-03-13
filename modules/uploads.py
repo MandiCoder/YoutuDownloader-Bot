@@ -9,7 +9,6 @@ def upload_video(app, message_id, data):
     app.send_video(message_id, data["file_path"], caption=caption, thumb=thumb)
     sms.delete()
     unlink(data["file_path"])
-    unlink(thumb)
     
     
     
@@ -21,27 +20,22 @@ def upload_audio(app, message_id, data):
     app.send_audio(message_id, data['file_path'], thumb=thumb)
     sms.delete()
     unlink(data["file_path"])
-    unlink(thumb)
-    print(thumb)
     
     
     
 def download_thumb(url, name):
-    img_name = f"{name}.jpg"
-    url_default = "https://ik.imagekit.io/sync/Designer%20(2).png"
-    
+    img_name = f"{name}.jpg"    
+
     try:
         imagen = get(url)
-    except Exception as e:
-        imagen = get(url_default)
-        print(e)
+        with open(img_name, 'wb') as img:
+            img.write(imagen.content)
         
-    with open(img_name, 'wb') as img:
-        img.write(imagen.content)
-    
-    imagen = Image.open(img_name)
-    imagen.thumbnail((320, 320))
-    imagen.save(img_name)
+        imagen = Image.open(img_name)
+        imagen.thumbnail((320, 320))
+        imagen.save(img_name)
+    except:
+        img_name = "Designer.png"
     
         
     
