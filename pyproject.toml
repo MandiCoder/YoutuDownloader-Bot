@@ -11,6 +11,8 @@ pyrogram = "^2.0.106"
 pytube = "^15.0.0"
 python-dotenv = "^1.0.1"
 tgcrypto = "^1.2.5"
+requests = "^2.31.0"
+pillow = "^10.2.0"
 
 
 [build-system]
