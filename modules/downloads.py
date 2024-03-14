@@ -2,14 +2,39 @@ from yt_dlp import YoutubeDL
 from os.path import join
 
 output_directory = "downloads"
+lista_videos = []
+
+class MyLogger(object):
+    def debug(self, msg):
+        pass
+
+    def warning(self, msg):
+        pass
+
+    def error(self, msg):
+        print(msg)
+
+def my_hook(d):
+    if d['status'] == 'finished':
+        
+        lista_videos.append({
+            'filename' : d['filename'],
+            'title'    : d['info_dict']['title'],
+            'thumb'    : d['info_dict']['thumbnails'][-1]['url']
+        })
+   
+
 
 def download_video(url:str, message) -> dict:
+    sms = message.reply("**⏳ Cargando...**")
     ydl_opts = {
         'format': 'best',
         'outtmpl': join('downloads', '%(title)s.%(ext)s'),
+        # 'logger': MyLogger(),
+        # 'progress_hooks': [my_hook],
     }
     
-    sms = message.reply("**⏳ Cargando...**")
+   
     
     with YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(url, download=False)   

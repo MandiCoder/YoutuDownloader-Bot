@@ -1,19 +1,49 @@
+from os.path import join
 from yt_dlp import YoutubeDL
 
-def descargar_video_y_extraer_imagen(url):
+
+url = "https://youtube.com/playlist?list=PLtrlW8JHicSKY_iL6jwKwgswROodeDbQj&si=onfJmov_h7RsNo1I"
+
+lista_videos = []
+
+class MyLogger(object):
+    def debug(self, msg):
+        pass
+
+    def warning(self, msg):
+        pass
+
+    def error(self, msg):
+        print(msg)
+
+def my_hook(d):
+    if d['status'] == 'finished':
+        
+        lista_videos.append({
+            'filename' : d['filename'],
+            'title'    : d['info_dict']['title'],
+            'thumb'    : d['info_dict']['thumbnails'][-1]['url']
+        })
+   
+        
+        
+
+ydl_opts = {
+    'format': 'best',
+    'outtmpl': join('downloads', '%(title)s.%(ext)s'),
+    'logger': MyLogger(),
+    'progress_hooks': [my_hook],
+}
+
+    
+with YoutubeDL(ydl_opts) as ydl:
     ydl_opts = {
-        'format': 'best',  # Descargar en el mejor formato disponible
-        'writeinfojson': True,  # Escribir metadatos en un archivo .info.json
+        'format': 'best',
+        'outtmpl': join('downloads', '%(title)s.%(ext)s'),
+        'progress_hooks': [my_hook],
+
     }
-
-    with YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(url, download=True)   
-        print(info_dict)
-        thumbnail_url = info_dict['thumbnail']  # Extraer el enlace de la imagen del video
-
-    return thumbnail_url
-
-# Usar la función
-url_del_video = 'https://youtu.be/VsYzmYkeeP4?si=j8HMCEzdC7wEGYYw'  # Reemplaza esto con la URL de tu video
-url_de_la_imagen = descargar_video_y_extraer_imagen(url_del_video)
-print(f'La URL de la imagen del video es: {url_de_la_imagen}')
+    
+    ydl.download(url)   
+    
+print(lista_videos)
