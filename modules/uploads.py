@@ -21,11 +21,16 @@ def upload_video(app, message_id, data):
 def up(app, message_id, data):
     file = data["file_path"]
     if data['description'] == '':
-        desc = " "
+        desc = " " 
     else:
         desc = data['description']
         
     caption = f"**--Nombre:-- __{data['title']}__\n\n--Descripcion:-- __{desc}__**"
+    
+    if len(caption) > 1024:
+        caption = tuple(caption)
+        caption = "".join(caption[:1024])
+    
     sms = app.send_message(message_id, f"**🚀 Subiendo video: `{data['title']}`**")
     thumb = download_thumb(url=data['thumb'], name=data['title'])
     video = VideoFileClip(file)

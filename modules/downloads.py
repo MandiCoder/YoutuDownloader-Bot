@@ -28,7 +28,11 @@ def download_video(url:str, message) -> dict:
             file = ydl.prepare_filename(info_dict)
             thumb = info_dict['thumbnail'] 
             title = info_dict['title']
-            description = info_dict['description']
+            try:
+                description = info_dict['description']
+            except Exception as e:
+                description = " "
+                print(e)
             sms.edit_text(f"**🚚 Descargando video: `{title}`**")
             
         with YoutubeDL(ydl_opts) as ydl:

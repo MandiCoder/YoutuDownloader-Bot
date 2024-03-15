@@ -24,7 +24,7 @@ class PlayList():
         
         if d['status'] == 'downloading':
             if self.count == 0:
-                mensaje = f"        **● Descargando: `{d['info_dict']['title']}`**\n"
+                mensaje = f"        **● Descargando: **`{d['info_dict']['title']}`\n"
                 self.texto += mensaje
                 self.sms.edit_text(self.texto)
             self.count +=1
