@@ -1,53 +1,39 @@
 from yt_dlp import YoutubeDL
 from os.path import join
+from modules.playlist import PlayList
 
 output_directory = "downloads"
 lista_videos = []
 
-class MyLogger(object):
-    def debug(self, msg):
-        pass
 
-    def warning(self, msg):
-        pass
-
-    def error(self, msg):
-        print(msg)
-
-def my_hook(d):
-    if d['status'] == 'finished':
-        
-        lista_videos.append({
-            'filename' : d['filename'],
-            'title'    : d['info_dict']['title'],
-            'thumb'    : d['info_dict']['thumbnails'][-1]['url']
-        })
    
 
-
+# DESCARGAR VIDEO -------------------------------------------------------
 def download_video(url:str, message) -> dict:
     sms = message.reply("**⏳ Cargando...**")
-    ydl_opts = {
-        'format': 'best',
-        'outtmpl': join('downloads', '%(title)s.%(ext)s'),
-        # 'logger': MyLogger(),
-        # 'progress_hooks': [my_hook],
-    }
+            
     
-   
-    
-    with YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(url, download=False)   
-        file = ydl.prepare_filename(info_dict)
-        thumb = info_dict['thumbnail'] 
-        title = info_dict['title']
-        description = info_dict['description']
-
-    sms.edit_text(f"**🚚 Descargando video: `{title}`**")
-    
-    with YoutubeDL(ydl_opts) as ydl:
-        ydl.download(url)
+    if url.startswith("https://youtube.com/playlist?"):
+        lista_videos = PlayList(sms, url).download()
+        return lista_videos
+            
+    else:
+        ydl_opts = {
+            'format': 'best',
+            'outtmpl': join('downloads', '%(title)s.%(ext)s'),
+        }
         
+        with YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(url, download=False)   
+            file = ydl.prepare_filename(info_dict)
+            thumb = info_dict['thumbnail'] 
+            title = info_dict['title']
+            description = info_dict['description']
+            sms.edit_text(f"**🚚 Descargando video: `{title}`**")
+            
+        with YoutubeDL(ydl_opts) as ydl:
+            ydl.download(url)
+
     sms.delete()
   
     return {
@@ -59,6 +45,7 @@ def download_video(url:str, message) -> dict:
     
     
     
+# DESCARGAR AUDIO -----------------------------------------------------------
 def download_audio(url:str, message) -> dict:
     opciones = {
         'format': 'bestaudio/best',

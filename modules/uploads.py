@@ -7,14 +7,32 @@ from moviepy.editor import VideoFileClip
 
 
 def upload_video(app, message_id, data):
-    file = data["file_path"]
+    if isinstance(data, list):
+        for i in data:
+            try:
+                up(app, message_id, i)
+            except Exception as e:
+                app.send_message(message_id, e)
     
-    caption = f"**Nombre: __{data['title']}__\n\nDescripcion: __{data['description']}__**"
+    else:
+        up(app, message_id, data)
+    
+    
+def up(app, message_id, data):
+    file = data["file_path"]
+    if data['description'] == '':
+        desc = " "
+    else:
+        desc = data['description']
+        
+    caption = f"**--Nombre:-- __{data['title']}__\n\n--Descripcion:-- __{desc}__**"
     sms = app.send_message(message_id, f"**🚀 Subiendo video: `{data['title']}`**")
     thumb = download_thumb(url=data['thumb'], name=data['title'])
     video = VideoFileClip(file)
     
-    app.send_video(message_id, file, caption=caption, thumb=thumb, duration=video.duration)
+    duration = int(video.duration)
+    
+    app.send_video(message_id, file, caption=caption, thumb=thumb, duration=duration)
     sms.delete()
     unlink(file)
     unlink(thumb)
